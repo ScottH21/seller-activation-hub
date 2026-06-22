@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seller Activation Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p50:#EEEDFE;--p100:#CECBF6;--p400:#7F77DD;--p600:#534AB7;--p800:#3C3489;
+  --t50:#E1F5EE;--t100:#9FE1CB;--t400:#1D9E75;--t600:#0F6E56;--t800:#085041;
+  --c50:#FAECE7;--c100:#F5C4B3;--c400:#D85A30;--c600:#993C1D;--c800:#712B13;
+  --a50:#FAEEDA;--a100:#FAC775;--a400:#BA7517;--a600:#854F0B;
+  --b50:#E6F1FB;--b100:#B5D4F4;--b400:#378ADD;--b600:#185FA5;--b800:#0C447C;
+  --g50:#EAF3DE;--g100:#C0DD97;--g400:#639922;--g600:#3B6D11;
+  --gray50:#F7F6F3;--gray100:#EDEDEA;--gray200:#D8D7D0;--gray400:#888780;--gray600:#5F5E5A;--gray800:#2C2C2A;
+  --text:#1A1A18;--text2:#5A5955;--text3:#9A9890;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --bg:#F8F7F5;--surf:#FFFFFF;
+  --r:10px;--rl:16px;--rxl:20px;
+  --warn-bg:#FAEEDA;--warn-border:#FAC775;--warn-text:#633806;
+  --tip-bg:#E1F5EE;--tip-border:#9FE1CB;--tip-text:#085041;
+  --info-bg:#E6F1FB;--info-border:#B5D4F4;--info-text:#0C447C;
+  --danger-bg:#FAECE7;--danger-border:#F5C4B3;--danger-text:#712B13;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* HEADER */
+.hdr{background:var(--surf);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200}
+.logo{font-family:'DM Serif Display',Georgia,serif;font-size:19px;letter-spacing:-.3px;color:var(--text)}
+.logo em{color:var(--p600);font-style:normal}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.hdr-badge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--p50);color:var(--p800);padding:4px 10px;border-radius:20px}
+.hdr-progress{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)}
+.hdr-prog-bar{width:100px;height:4px;background:var(--gray100);border-radius:2px;overflow:hidden}
+.hdr-prog-fill{height:100%;background:linear-gradient(90deg,var(--p400),var(--t400));border-radius:2px;transition:width .4s ease}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:272px 1fr;min-height:calc(100vh - 58px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--surf);border-right:1px solid var(--border);padding:1.5rem 1rem;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;display:flex;flex-direction:column;gap:0}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);padding:0 .6rem;margin:0 0 .4rem}
+.sb-phase{width:100%;text-align:left;background:none;border:none;border-radius:var(--r);padding:.55rem .6rem;cursor:pointer;display:flex;align-items:center;gap:9px;font-family:inherit;font-size:13.5px;color:var(--text2);transition:background .1s,color .1s;margin-bottom:1px;position:relative}
+.sb-phase:hover{background:var(--gray50);color:var(--text)}
+.sb-phase.active{color:var(--text);font-weight:500}
+.sb-phase.active.ph-menu{background:var(--p50);color:var(--p800)}
+.sb-phase.active.ph-order{background:var(--t50);color:var(--t800)}
+.sb-phase.active.ph-soft{background:var(--b50);color:var(--b800)}
+.sb-phase.active.ph-impl{background:var(--c50);color:var(--c800)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-steps{display:none;flex-direction:column;gap:1px;margin:2px 0 6px 24px}
+.sb-phase.active + .sb-steps{display:flex}
+.sb-step-link{background:none;border:none;font-family:inherit;font-size:12px;color:var(--text3);padding:4px 6px;border-radius:6px;cursor:pointer;text-align:left;transition:color .1s,background .1s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-step-link:hover{color:var(--text2);background:var(--gray50)}
+.sb-step-link.done{color:var(--g600)}
+.sb-step-link.done::before{content:'✓ '}
+.sb-meta{margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0}
+.sb-div{height:1px;background:var(--border);margin:.9rem 0}
+.sb-overall{padding:0 .6rem}
+.sb-ov-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
+.sb-ov-bar{height:5px;background:var(--gray100);border-radius:3px;overflow:hidden}
+.sb-ov-fill{height:100%;background:linear-gradient(90deg,var(--p400),var(--t400),var(--b400),var(--c400));border-radius:3px;transition:width .4s}
+.sb-ready{background:var(--g50);border:1px solid var(--g100);border-radius:var(--r);padding:.75rem .875rem;margin-top:.75rem;display:none}
+.sb-ready.show{display:block}
+.sb-ready-title{font-size:12px;font-weight:600;color:var(--g600);display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.sb-ready p{font-size:11.5px;color:var(--g600);line-height:1.4}
+
+/* MAIN */
+.main{padding:0;max-width:900px}
+.ph-section{display:none}
+.ph-section.active{display:block}
+
+/* PHASE HERO */
+.ph-hero{padding:2.25rem 2.25rem 1.5rem;border-bottom:1px solid var(--border)}
+.ph-eye{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem}
+.ph-hero h1{font-family:'DM Serif Display',Georgia,serif;font-size:30px;font-weight:400;letter-spacing:-.5px;margin-bottom:.4rem;line-height:1.2}
+.ph-hero p{font-size:14px;color:var(--text2);max-width:560px;line-height:1.65}
+.ph-prog-row{display:flex;align-items:center;gap:10px;margin-top:1rem}
+.ph-prog-bar{flex:1;height:4px;background:var(--gray100);border-radius:2px;overflow:hidden}
+.ph-prog-fill{height:100%;border-radius:2px;transition:width .4s}
+.ph-prog-label{font-size:12px;color:var(--text3);white-space:nowrap}
+.when-chips{display:flex;flex-wrap:wrap;gap:6px;padding:1rem 2.25rem;border-bottom:1px solid var(--border)}
+.chip{font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--border2);color:var(--text2);background:var(--surf)}
+
+/* STEP ACCORDION */
+.step-list{padding:1rem 2.25rem 2.5rem;display:flex;flex-direction:column;gap:6px}
+.step-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.step-card:hover{border-color:var(--border2)}
+.step-card.open{border-color:var(--border2);box-shadow:0 2px 14px rgba(0,0,0,.05)}
+.step-hdr{display:flex;align-items:flex-start;gap:12px;padding:.95rem 1.125rem;cursor:pointer;user-select:none}
+.step-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-ico svg{width:16px;height:16px}
+.step-info{flex:1;min-width:0}
+.step-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:2px}
+.step-sub{font-size:13px;color:var(--text2)}
+.step-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:3px}
+.step-done-pill{font-size:11px;font-weight:600;background:var(--g50);color:var(--g600);padding:2px 9px;border-radius:20px;display:none}
+.step-card.all-done .step-done-pill{display:inline}
+.step-chev{color:var(--text3);flex-shrink:0;transition:transform .2s}
+.step-card.open .step-chev{transform:rotate(180deg)}
+.step-body{display:none;border-top:1px solid var(--border);padding:1.25rem 1.125rem}
+.step-card.open .step-body{display:block}
+
+/* HOW-TO CONTENT */
+.how-intro{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:1.25rem}
+.how-steps{display:flex;flex-direction:column;gap:0;margin-bottom:1.25rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.how-step{display:flex;gap:12px;padding:.875rem 1rem;border-bottom:1px solid var(--border);background:var(--surf)}
+.how-step:last-child{border-bottom:none}
+.how-step-num{width:22px;height:22px;border-radius:50%;background:var(--gray100);color:var(--gray600);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.how-step-body{}
+.how-step-body strong{display:block;font-size:13.5px;font-weight:500;color:var(--text);margin-bottom:2px}
+.how-step-body p{font-size:13px;color:var(--text2);line-height:1.55}
+.how-step-body code{font-family:monospace;font-size:12px;background:var(--gray100);padding:1px 5px;border-radius:4px;color:var(--text)}
+
+/* CALLOUT BOXES */
+.callout{border-radius:var(--r);padding:.75rem 1rem;margin-bottom:.875rem;display:flex;gap:10px;font-size:13px;line-height:1.55}
+.callout svg{width:15px;height:15px;flex-shrink:0;margin-top:1px}
+.callout-body strong{display:block;font-weight:600;margin-bottom:1px}
+.callout.tip{background:var(--tip-bg);border:1px solid var(--tip-border);color:var(--tip-text)}
+.callout.warn{background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn-text)}
+.callout.info{background:var(--info-bg);border:1px solid var(--info-border);color:var(--info-text)}
+.callout.danger{background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--danger-text)}
+
+/* CHECKLIST */
+.ck-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem}
+.checklist{list-style:none;margin-bottom:1rem;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:.65rem .875rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;font-size:13.5px;color:var(--text2)}
+.checklist li:last-child{border-bottom:none}
+.checklist li:hover{background:var(--gray50)}
+.ck{width:18px;height:18px;border:1.5px solid var(--gray200);border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.checklist li.done .ck{background:var(--t400);border-color:var(--t400)}
+.ck svg{display:none;width:10px;height:10px}
+.checklist li.done .ck svg{display:block}
+.checklist li.done .ck-text{text-decoration:line-through;opacity:.4}
+
+/* RESOURCE LINKS */
+.res-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem}
+.res-links{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.res-link{font-size:12.5px;padding:6px 12px;border-radius:var(--r);border:1px solid var(--border2);background:var(--gray50);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .1s,color .1s;text-decoration:none}
+.res-link:hover{background:var(--surf);color:var(--text);border-color:var(--gray400)}
+.res-link svg{width:13px;height:13px;opacity:.5}
+
+/* SCREEN MOCK */
+.screen-mock{border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;font-size:12.5px}
+.screen-bar{background:var(--gray100);padding:6px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.screen-bar span{width:8px;height:8px;border-radius:50%;display:inline-block}
+.screen-bar span:nth-child(1){background:#F0997B}
+.screen-bar span:nth-child(2){background:#FAC775}
+.screen-bar span:nth-child(3){background:#9FE1CB}
+.screen-url{font-size:11px;color:var(--text3);margin-left:6px;font-family:monospace}
+.screen-body{padding:1rem;background:var(--gray50);display:flex;flex-direction:column;gap:8px}
+.screen-row{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.screen-row .sr-icon{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.screen-row .sr-label{font-size:12px;color:var(--text2);flex:1}
+.screen-row .sr-val{font-size:12px;font-weight:500;color:var(--text)}
+.screen-row .sr-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+
+/* SUCCESS */
+#success-screen{display:none;flex-direction:column;align-items:center;text-align:center;padding:5rem 2rem}
+#success-screen.show{display:flex}
+.succ-ring{width:88px;height:88px;border-radius:50%;background:var(--g50);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.succ-ring svg{width:40px;height:40px;color:var(--g400)}
+#success-screen h2{font-family:'DM Serif Display',Georgia,serif;font-size:32px;font-weight:400;letter-spacing:-.5px;margin-bottom:.5rem}
+#success-screen > p{font-size:15px;color:var(--text2);max-width:440px;margin-bottom:2rem;line-height:1.65}
+.succ-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:680px;margin-bottom:2rem}
+.succ-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--rl);padding:.875rem;text-align:left}
+.succ-card-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
+.succ-card-ico svg{width:14px;height:14px}
+.succ-card h3{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:2px}
+.succ-card p{font-size:11.5px;color:var(--text2);line-height:1.4}
+.succ-btns{display:flex;gap:10px}
+.btn-pri{font-family:inherit;font-size:14px;font-weight:500;padding:10px 22px;border-radius:var(--r);background:var(--p600);color:#fff;border:none;cursor:pointer;transition:background .1s}
+.btn-pri:hover{background:var(--p800)}
+.btn-sec{font-family:inherit;font-size:14px;padding:10px 22px;border-radius:var(--r);background:var(--surf);color:var(--text2);border:1px solid var(--border2);cursor:pointer;transition:background .1s}
+.btn-sec:hover{background:var(--gray50)}
+
+canvas#conf{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+/* COLOR HELPERS */
+.ico-p{background:var(--p50);color:var(--p600)}
+.ico-t{background:var(--t50);color:var(--t600)}
+.ico-b{background:var(--b50);color:var(--b600)}
+.ico-c{background:var(--c50);color:var(--c600)}
+.ico-g{background:var(--g50);color:var(--g600)}
+.fill-p{background:var(--p400)}
+.fill-t{background:var(--t400)}
+.fill-b{background:var(--b400)}
+.fill-c{background:var(--c400)}
+.eye-p{color:var(--p600)}
+.eye-t{color:var(--t600)}
+.eye-b{color:var(--b600)}
+.eye-c{color:var(--c600)}
+.dot-p{background:var(--p400)}
+.dot-t{background:var(--t400)}
+.dot-b{background:var(--b400)}
+.dot-c{background:var(--c400)}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+  .succ-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<canvas id="conf"></canvas>
+
+<header class="hdr">
+  <div class="logo"><svg width="24" height="24" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px"><path d="M48.2667 0H7.73333C3.46243 0 0 3.46243 0 7.73333V48.2667C0 52.5376 3.46243 56 7.73333 56H48.2667C52.5376 56 56 52.5376 56 48.2667V7.73333C56 3.46243 52.5376 0 48.2667 0Z" fill="#000"/><path d="M39.2 14H16.8C15.2536 14 14 15.2536 14 16.8V39.2C14 40.7464 15.2536 42 16.8 42H39.2C40.7464 42 42 40.7464 42 39.2V16.8C42 15.2536 40.7464 14 39.2 14Z" fill="#fff"/><path d="M33.6 22.4H22.4C22.1791 22.4 22 22.5791 22 22.8V33.2C22 33.4209 22.1791 33.6 22.4 33.6H33.6C33.8209 33.6 34 33.4209 34 33.2V22.8C34 22.5791 33.8209 22.4 33.6 22.4Z" fill="#000"/></svg>Activation<em>Hub</em></div>
+  <div class="hdr-right">
+    <div class="hdr-progress">
+      <span id="hdr-pct">0%</span>
+      <div class="hdr-prog-bar"><div class="hdr-prog-fill" id="hdr-fill" style="width:0%"></div></div>
+    </div>
+    <div class="hdr-badge">Pre-activation</div>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-label">Phases</div>
+
+  <button class="sb-phase active ph-menu" onclick="switchPhase('menu',this,'ph-menu')" id="sbtn-menu">
+    <span class="sb-dot dot-p"></span>Menu setup<span class="sb-meta" id="smeta-menu">0/4</span>
+  </button>
+  <div class="sb-steps" id="sbsteps-menu">
+    <button class="sb-step-link" onclick="openStep('menu','s1')">Choose build method</button>
+    <button class="sb-step-link" onclick="openStep('menu','s2')">Create menu groups</button>
+    <button class="sb-step-link" onclick="openStep('menu','s3')">Assign to channels</button>
+    <button class="sb-step-link" onclick="openStep('menu','s4')">QA your catalog</button>
+  </div>
+
+  <button class="sb-phase ph-order" onclick="switchPhase('order',this,'ph-order')" id="sbtn-order">
+    <span class="sb-dot dot-t"></span>Online ordering<span class="sb-meta" id="smeta-order">0/3</span>
+  </button>
+  <div class="sb-steps" id="sbsteps-order">
+    <button class="sb-step-link" onclick="openStep('order','s1')">Ordering profile</button>
+    <button class="sb-step-link" onclick="openStep('order','s2')">Website embed</button>
+    <button class="sb-step-link" onclick="openStep('order','s3')">DoorDash integration</button>
+  </div>
+
+  <button class="sb-phase ph-soft" onclick="switchPhase('soft',this,'ph-soft')" id="sbtn-soft">
+    <span class="sb-dot dot-b"></span>Software activation<span class="sb-meta" id="smeta-soft">0/4</span>
+  </button>
+  <div class="sb-steps" id="sbsteps-soft">
+    <button class="sb-step-link" onclick="openStep('soft','s1')">Account &amp; permissions</button>
+    <button class="sb-step-link" onclick="openStep('soft','s2')">POS app setup</button>
+    <button class="sb-step-link" onclick="openStep('soft','s3')">Payment processing</button>
+    <button class="sb-step-link" onclick="openStep('soft','s4')">Integrations &amp; apps</button>
+  </div>
+
+  <button class="sb-phase ph-impl" onclick="switchPhase('impl',this,'ph-impl')" id="sbtn-impl">
+    <span class="sb-dot dot-c"></span>Implementation<span class="sb-meta" id="smeta-impl">0/4</span>
+  </button>
+  <div class="sb-steps" id="sbsteps-impl">
+    <button class="sb-step-link" onclick="openStep('impl','s1')">Pre-kickoff prep</button>
+    <button class="sb-step-link" onclick="openStep('impl','s2')">POS &amp; Dashboard training</button>
+    <button class="sb-step-link" onclick="openStep('impl','s3')">Online ordering training</button>
+    <button class="sb-step-link" onclick="openStep('impl','s4')">Go-live QA</button>
+  </div>
+
+  <div class="sb-div"></div>
+  <div class="sb-overall">
+    <div class="sb-ov-row"><span>Overall progress</span><span id="sb-pct">0%</span></div>
+    <div class="sb-ov-bar"><div class="sb-ov-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+  <div class="sb-ready" id="sb-ready">
+    <div class="sb-ready-title">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Ready to go live
+    </div>
+    <p>All four phases complete. Seller is fully prepared for activation.</p>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- ════════════════════ PHASE 1 — MENU SETUP ════════════════════ -->
+<div class="ph-section active" id="ph-menu">
+  <div class="ph-hero">
+    <div class="ph-eye eye-p">Phase 1 · Menu setup</div>
+    <h1>Build your catalog foundation</h1>
+    <p>Menus are the source of truth for everything buyers see — POS, kiosks, online ordering, and delivery apps all pull from the same catalog. Build it right here first.</p>
+    <div class="ph-prog-row">
+      <div class="ph-prog-bar"><div class="ph-prog-fill fill-p" id="pprog-menu" style="width:0%"></div></div>
+      <span class="ph-prog-label" id="plabel-menu">0 of 4 complete</span>
+    </div>
+  </div>
+  <div class="when-chips">
+    <span class="chip">🔄 Migrating from another platform</span>
+    <span class="chip">🖥 Menus needed in POS + online</span>
+    <span class="chip">📦 Items exist but aren't showing</span>
+  </div>
+  <div class="step-list">
+
+    <!-- STEP 1 -->
+    <div class="step-card" id="card-menu-s1">
+      <div class="step-hdr" onclick="toggleStep('menu-s1')">
+        <div class="step-ico ico-p"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Choose your build method</div><div class="step-sub">Upload, import, AI starter, or build manually</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Square gives you four ways to build your menu. The right choice depends on whether you're starting from scratch, migrating from another system, or already have a spreadsheet of items ready.</p>
+
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step-num">A</div>
+            <div class="how-step-body"><strong>CSV Upload — fastest for migrations</strong><p>Export your current menu as a spreadsheet, map columns to Square's template (Name, Price, Category, Description), then upload under <code>Items → Import</code>. Square validates each row and flags errors before saving.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">B</div>
+            <div class="how-step-body"><strong>AI Starter Menu — best for new sellers</strong><p>Go to <code>Items → Menus → Create menu → AI starter</code>. Type your restaurant concept and cuisine style. Square generates a complete starting menu with items, descriptions, and suggested prices. Edit before publishing.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">C</div>
+            <div class="how-step-body"><strong>Manual build — most control</strong><p>Go to <code>Items → Create item</code>. Add name, price, category, description, and image for each item one at a time. Best for sellers with fewer than 30 items or highly customized catalogs.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">D</div>
+            <div class="how-step-body"><strong>Import from another platform</strong><p>If the seller is on Toast, Clover, or Lightspeed, use <code>Items → Import → Connect source</code>. Square maps common fields automatically. Always review category structure after import — it rarely transfers perfectly.</p></div>
+          </div>
+        </div>
+
+        <div class="callout warn">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2L1.5 13h13L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v4M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Before you import</strong>Clean up your source data first. Remove duplicate items, standardize price formatting (no $ signs in CSV cells), and ensure every item has a category. Garbage in, garbage out.</div>
+        </div>
+
+        <div class="callout tip">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Pro tip</strong>Even if you use AI starter or CSV import, plan to spend 30 minutes reviewing item descriptions. Generic descriptions reduce add-on attach rate. Specific ones ("house-made, slow-braised for 6 hours") drive higher order values.</div>
+        </div>
+
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="menu-s1">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Review existing item list or POS export before starting</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Select and complete your build method</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Review item names, descriptions, and prices after build</span></li>
+        </ul>
+        <div class="res-label">Guides</div>
+        <div class="res-links">
+          <a class="res-link" href="https://squareup.com/help/us/en/article/6460" target="_blank"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-3M6 1h4v4H6V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Create and update menus</a>
+          <a class="res-link" href="https://squareup.com/help/us/en/article/6461" target="_blank"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-3M6 1h4v4H6V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>CSV import template</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-card" id="card-menu-s2">
+      <div class="step-hdr" onclick="toggleStep('menu-s2')">
+        <div class="step-ico ico-p"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="step-info"><div class="step-title">Create menu groups and modifiers</div><div class="step-sub">Categories, sub-groups, modifier sets, and item pairing</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Menu groups control how items are organized on every buyer-facing surface. Items without a group will not appear on online ordering, kiosks, or delivery apps — this is the most commonly skipped step.</p>
+
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step-num">1</div>
+            <div class="how-step-body"><strong>Create your top-level groups</strong><p>Go to <code>Items → Menus → [your menu] → Add group</code>. Typical QSR structure: Starters, Mains, Sides, Drinks, Desserts. Keep it to 6–8 groups max — more than that overwhelms buyers on mobile.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">2</div>
+            <div class="how-step-body"><strong>Assign every item to a group</strong><p>Drag items into groups from the menu builder, or use the bulk-assign tool under <code>Items → Manage items → Assign to menu</code>. Filter by "unassigned" to catch anything missed.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">3</div>
+            <div class="how-step-body"><strong>Build modifier groups</strong><p>Go to <code>Items → Modifiers → Create modifier set</code>. Common sets: Size (Small/Medium/Large), Temperature (Hot/Iced), Add-ons (Extra shot, Oat milk). Set min/max selections and mark required vs optional. Then attach the modifier set to relevant items.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">4</div>
+            <div class="how-step-body"><strong>Set availability windows</strong><p>For items only available at certain times (Breakfast Menu, Happy Hour), use <code>Item availability → Schedule</code> on the item page. This prevents off-menu orders without manual toggling.</p></div>
+          </div>
+        </div>
+
+        <div class="callout danger">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Critical:</strong> Items must be added to a menu group to appear on online ordering, kiosks, and delivery apps. A complete item catalog with no groups assigned = zero buyer-facing visibility.</div>
+        </div>
+
+        <div class="callout tip">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Modifiers drive revenue</strong>Well-structured modifier sets (especially upsell add-ons) meaningfully increase average order value. Spend time here — it pays off.</div>
+        </div>
+
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="menu-s2">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Create all top-level menu groups (max 6–8)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Assign every item to at least one group</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Build and attach modifier sets for applicable items</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm no items are left unassigned</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-card" id="card-menu-s3">
+      <div class="step-hdr" onclick="toggleStep('menu-s3')">
+        <div class="step-ico ico-p"><svg viewBox="0 0 16 16" fill="none"><path d="M2 8h3M8 2v3M14 8h-3M8 14v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="step-info"><div class="step-title">Assign menus to sales channels</div><div class="step-sub">POS, online ordering, kiosk, and delivery apps</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">One catalog can power multiple surfaces with different visibility rules. A "Lunch Menu" might appear on online ordering and POS but not on DoorDash. Channel assignment is where you control that.</p>
+
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-step-num">1</div>
+            <div class="how-step-body"><strong>Assign to POS mode</strong><p>Go to <code>Point of Sale → Settings → Menu</code> and select the menu for each POS mode (e.g. Dine-in vs Takeout). Servers will see exactly this menu when they open that mode.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">2</div>
+            <div class="how-step-body"><strong>Assign to online ordering</strong><p>In <code>Online → Overview → Menu settings</code>, connect the menu to your ordering profile. Only items in connected menus will appear on your ordering page. If nothing appears after setup, check this first.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">3</div>
+            <div class="how-step-body"><strong>Assign to kiosk (if applicable)</strong><p>Under <code>Square Kiosk → Settings → Menu</code>. Kiosk menus typically exclude items that require staff customization — keep the kiosk menu leaner than the POS menu.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">4</div>
+            <div class="how-step-body"><strong>Verify buyer-facing preview</strong><p>Open your ordering URL in an incognito window and browse every group. Confirm prices, item names, and images look right before moving on. This is your buyer's first impression.</p></div>
+          </div>
+        </div>
+
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="menu-s3">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Assign menu to each POS mode in use</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Assign menu to online ordering channel</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Preview ordering URL and verify all groups visible</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-card" id="card-menu-s4">
+      <div class="step-hdr" onclick="toggleStep('menu-s4')">
+        <div class="step-ico ico-p"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-info"><div class="step-title">QA your catalog before going live</div><div class="step-sub">Prices, images, tax, and an end-to-end order test</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Before any buyer-facing channel goes live, run this QA pass. It takes 20 minutes and prevents the most common activation issues.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Check prices and tax settings</strong><p>In <code>Items → Taxes</code>, confirm the correct tax rate is applied to each item or category. Verify that modifiers carry correct pricing (especially "upcharge" modifiers).</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Add images to high-traffic items</strong><p>Items with photos convert at significantly higher rates on online ordering. Upload at least for your top 10–15 sellers. Use square images (1:1 ratio), minimum 600×600px. Avoid dark or cluttered backgrounds.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Place a test order end-to-end</strong><p>Open POS, ring up 3–5 items including at least one with modifiers. Complete the transaction. Confirm receipt prints (or sends digitally) and the order appears in Dashboard under <code>Transactions</code>.</p></div></div>
+        </div>
+        <div class="callout info">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Note:</strong> Test transactions processed via Square's test card won't appear in live reports. Use a real card for your final verification order, then issue a refund immediately after.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="menu-s4">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Verify all prices and tax settings</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Add photos to top 10–15 items</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Place and complete a test POS order</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm transaction shows in Dashboard</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════ PHASE 2 — ONLINE ORDERING ════════════════════ -->
+<div class="ph-section" id="ph-order">
+  <div class="ph-hero">
+    <div class="ph-eye eye-t">Phase 2 · Online ordering</div>
+    <h1>Turn on your ordering channels</h1>
+    <p>Set up direct ordering, embed it on your website, and optionally connect delivery marketplaces — all from a single menu catalog.</p>
+    <div class="ph-prog-row">
+      <div class="ph-prog-bar"><div class="ph-prog-fill fill-t" id="pprog-order" style="width:0%"></div></div>
+      <span class="ph-prog-label" id="plabel-order">0 of 3 complete</span>
+    </div>
+  </div>
+  <div class="when-chips">
+    <span class="chip">🛒 Direct online ordering</span>
+    <span class="chip">🌐 Website order page</span>
+    <span class="chip">🚗 DoorDash delivery</span>
+  </div>
+  <div class="step-list">
+
+    <div class="step-card" id="card-order-s1">
+      <div class="step-hdr" onclick="toggleStep('order-s1')">
+        <div class="step-ico ico-t"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Create your online ordering profile</div><div class="step-sub">Branded direct ordering — no marketplace fees</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">The ordering profile is the branded page buyers land on when ordering directly. It pulls your menu catalog automatically — but a published menu must exist before setup begins.</p>
+        <div class="callout warn">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2L1.5 13h13L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v4M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Prerequisite:</strong> Phase 1 must be complete. You cannot set up online ordering without a published, channel-assigned menu.</div>
+        </div>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Open Online Ordering setup</strong><p>From Square Dashboard: <code>Online → Get started</code> or <code>Online → Overview → Edit profile</code> if already initialized.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Set your business details</strong><p>Add your restaurant name, logo, cover photo, and cuisine type. These appear on the order page and in search results. Use high-quality images — this is your digital storefront.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Configure fulfillment types</strong><p>Enable Pickup, Delivery, or both. For delivery, set your delivery radius, minimum order amount, and delivery fee. For pickup, set your prep time (most QSRs use 10–15 min).</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Set ordering hours</strong><p>Configure hours separately from your general business hours if needed. Online ordering can have narrower windows — useful for sellers with limited kitchen staff.</p></div></div>
+          <div class="how-step"><div class="how-step-num">5</div><div class="how-step-body"><strong>Publish and test</strong><p>Click Publish. Copy your ordering URL, open in incognito, place a test order to end. Confirm the order appears in <code>Dashboard → Orders</code> and an email confirmation is sent.</p></div></div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="order-s1">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm published menu exists from Phase 1</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Add business name, logo, cover image</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Configure fulfillment (pickup and/or delivery settings)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Set ordering hours and prep time</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Publish and place a test order end-to-end</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-order-s2">
+      <div class="step-hdr" onclick="toggleStep('order-s2')">
+        <div class="step-ico ico-t"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M5 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Embed ordering on your website</div><div class="step-sub">Order Online vs Shop All — and how to choose</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Square gives you two ways to bring ordering into your website. F&B sellers should almost always use "Order Online" — "Shop All" is designed for retail product browsing, not restaurant ordering.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Decide: Order Online vs Shop All</strong><p><strong>Order Online:</strong> Routes buyers through your Square ordering profile. Best for restaurants, food trucks, cafes. Supports pickup/delivery, schedules, and prep times.<br><strong>Shop All:</strong> Displays a product grid for browsing. Best for retail sellers with large catalogs. Not recommended for F&B.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Generate your embed code</strong><p>Go to <code>Online → Order page → Share → Embed</code>. Copy the snippet. It's a simple <code>&lt;a&gt;</code> tag that opens your ordering profile — no iframe or complex integration needed.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Place on your website</strong><p>Add the button to your homepage header or nav, and again on your Contact/Find Us page. Make it a primary CTA — don't bury it. If you use WordPress, Squarespace, or Wix, paste in the Custom HTML block.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Test the full web-to-order flow</strong><p>On mobile and desktop: land on your website → click Order Online → browse menu → add items → checkout. Confirm the order completes and appears in Dashboard.</p></div></div>
+        </div>
+        <div class="callout tip">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Mobile-first:</strong> Over 70% of online food orders are placed on mobile. Test your ordering flow on a phone before declaring it live — button size, image loading, and checkout UX on mobile are the top friction points.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="order-s2">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Choose the correct page type (Order Online for F&B)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Generate embed code and add to website</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Test full flow on mobile and desktop</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-order-s3">
+      <div class="step-hdr" onclick="toggleStep('order-s3')">
+        <div class="step-ico ico-t"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Connect DoorDash (if in scope)</div><div class="step-sub">Delivery marketplace sync and ongoing management</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Only complete this step if DoorDash activation is part of the seller's launch plan. Once connected, Square keeps menus in sync automatically — item updates in Square flow to DoorDash within minutes.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Confirm prerequisites</strong><p>A Square menu must be built and published. The seller must have an active DoorDash merchant account. If they don't have one, they'll need to sign up at merchant.doordash.com before connecting.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Connect in Square Dashboard</strong><p>Go to <code>App Marketplace → DoorDash → Connect</code>. Log in with DoorDash merchant credentials. Select which menu to sync. The initial sync takes 10–30 minutes.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Review synced menu on DoorDash</strong><p>Log into DoorDash merchant portal and confirm menu structure, images, and pricing transferred correctly. Pay special attention to modifiers — complex nested modifier groups sometimes need manual cleanup.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Test a DoorDash order</strong><p>Place a test order from the DoorDash consumer app to confirm it flows through to Square POS as an incoming order. Check that order tickets print and the order appears in Dashboard.</p></div></div>
+        </div>
+        <div class="callout warn">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2L1.5 13h13L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v4M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Menu sync is one-way:</strong> Changes made directly in the DoorDash portal will be overwritten the next time Square syncs. All menu edits must be made in Square to persist.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="order-s3">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm DoorDash merchant account exists</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Connect via Square App Marketplace</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Review synced menu in DoorDash portal</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Place and verify a DoorDash test order</span></li>
+        </ul>
+        <div class="res-label">Guides</div>
+        <div class="res-links">
+          <a class="res-link" href="https://squareup.com/help/us/en/article/7459" target="_blank"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-3M6 1h4v4H6V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>DoorDash integration with Square</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════ PHASE 3 — SOFTWARE ACTIVATION ════════════════════ -->
+<div class="ph-section" id="ph-soft">
+  <div class="ph-hero">
+    <div class="ph-eye eye-b">Phase 3 · Software activation</div>
+    <h1>Activate and configure your software</h1>
+    <p>Before any hardware is set up, the software layer needs to be live — account permissions, POS app configuration, payment processing, and third-party integrations.</p>
+    <div class="ph-prog-row">
+      <div class="ph-prog-bar"><div class="ph-prog-fill fill-b" id="pprog-soft" style="width:0%"></div></div>
+      <span class="ph-prog-label" id="plabel-soft">0 of 4 complete</span>
+    </div>
+  </div>
+  <div class="when-chips">
+    <span class="chip">🔑 New Square account</span>
+    <span class="chip">👥 Multiple staff members</span>
+    <span class="chip">💳 Taking first payment</span>
+    <span class="chip">🔗 Third-party tools</span>
+  </div>
+  <div class="step-list">
+
+    <div class="step-card" id="card-soft-s1">
+      <div class="step-hdr" onclick="toggleStep('soft-s1')">
+        <div class="step-ico ico-b"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Account setup and permissions</div><div class="step-sub">Owner access, team roles, location structure</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Getting account access and team permissions right from day one prevents most support escalations. Spend time here — fixing permissions after go-live is painful for everyone.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Verify owner access to the Square account</strong><p>The business owner should be the account owner — not a rep, not a manager. Go to <code>Account → Account &amp; Settings → Personal information</code>. Confirm name, email, and phone match the business owner.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Set up your location(s)</strong><p>Each physical location needs its own Square location profile. Go to <code>Account → Business information → Locations → Add location</code>. Set address, timezone, and business hours for each. Multi-location sellers: menus, devices, and reporting are all location-specific.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Create team permission sets</strong><p>Go to <code>Team → Permissions → Create permission set</code>. Build roles before inviting staff. Typical restaurant setup: Owner (full access), Manager (reports + voids + refunds), Server (ring sales + view menu only). Never give manager-level access to all staff by default.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Invite team members</strong><p>Go to <code>Team → Team members → Invite</code>. Assign each person a permission set, location access, and wage (required for timecards). Staff get an email invite to create their own login pin.</p></div></div>
+          <div class="how-step"><div class="how-step-num">5</div><div class="how-step-body"><strong>Enable two-factor authentication</strong><p>Require 2FA for the owner account under <code>Account → Security → Two-step verification</code>. This protects payouts and account settings from unauthorized changes.</p></div></div>
+        </div>
+        <div class="callout danger">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Security risk:</strong> Sharing the owner login pin with staff is the single most common cause of unauthorized refunds and account changes. Always create individual logins for each team member.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="soft-s1">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm owner is the Square account owner</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Create and configure all location profiles</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Create permission sets (Owner, Manager, Server)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Invite all team members with correct roles</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Enable two-factor authentication on owner account</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-soft-s2">
+      <div class="step-hdr" onclick="toggleStep('soft-s2')">
+        <div class="step-ico ico-b"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">POS app setup and configuration</div><div class="step-sub">Download, sign in, POS mode, device codes, passcodes</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">The Square POS app needs to be installed, signed in, and configured with the correct mode before any hardware is connected. This is the software-side of device setup.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Download the Square app</strong><p>On each device (iPad or Android tablet): download <strong>Square Point of Sale</strong> from the App Store or Google Play. Do not download Square for Restaurants or Square for Retail unless that's the intended product — wrong app is a common source of confusion.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Sign in with a device code</strong><p>From Dashboard: <code>Devices → Device codes → Create code</code>. Name the device (e.g. "Front Counter 1"), assign a location, and generate the code. On the device, open Square → Sign in with device code → enter the 6-character code. This links the device to the correct location without sharing the owner password.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Select POS mode</strong><p>After signing in, Square prompts you to choose a mode: <strong>Quick Service</strong> (counter orders, no table management), <strong>Full Service</strong> (table layout, coursing, server assignment), or <strong>Retail</strong>. For QSR, select Quick Service. For sit-down, select Full Service.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Set passcodes for each staff member</strong><p>Each team member needs their own 4-digit passcode to clock in and take payments. Go to <code>Team → [Employee] → Edit → Set passcode</code>. Confirm each person can sign in on the device before training day.</p></div></div>
+          <div class="how-step"><div class="how-step-num">5</div><div class="how-step-body"><strong>Configure device-level settings</strong><p>In the POS app: <code>Settings → Hardware</code> — connect receipt printer and cash drawer. <code>Settings → Checkout</code> — set tip options, signature thresholds, and receipt delivery default. <code>Settings → Notifications</code> — enable online order alerts.</p></div></div>
+        </div>
+
+        <div class="screen-mock">
+          <div class="screen-bar"><span></span><span></span><span></span><span class="screen-url">Square POS → Settings → Checkout</span></div>
+          <div class="screen-body">
+            <div class="screen-row"><div class="sr-icon ico-b"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="sr-label">Tip options</span><span class="sr-val">15% · 20% · 25%</span></div>
+            <div class="screen-row"><div class="sr-icon ico-g"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="sr-label">Signature threshold</span><span class="sr-val">$0 (always)</span></div>
+            <div class="screen-row"><div class="sr-icon ico-b"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="sr-label">Receipt default</span><span class="sr-val">Ask customer</span></div>
+            <div class="screen-row"><div class="sr-icon" style="background:var(--a50);color:var(--a600)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v3M8 11v3M2 8h3M11 8h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="sr-label">Online order alerts</span><span class="sr-badge" style="background:var(--g50);color:var(--g600)">Enabled</span></div>
+          </div>
+        </div>
+
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="soft-s2">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Download Square POS app on all devices</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Create device codes and sign in each device</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Select correct POS mode (Quick Service / Full Service)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Set staff passcodes and verify sign-in</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Configure checkout settings (tips, signature, receipts, alerts)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-soft-s3">
+      <div class="step-hdr" onclick="toggleStep('soft-s3')">
+        <div class="step-ico ico-b"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M4 2h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Payment processing setup</div><div class="step-sub">Bank account, payout schedule, and processing verification</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Payments won't reach the seller's bank until this is configured. This is often completed during sign-up, but always verify before go-live — unverified accounts can have processing holds placed.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Complete identity verification</strong><p>Square requires identity verification before processing live payments. Go to <code>Account → Account &amp; Settings → Business → Legal details</code>. Provide owner SSN or EIN, date of birth, and business address. Verification is instant in most cases.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Connect a bank account</strong><p>Go to <code>Account → Balance → Bank accounts → Add bank account</code>. Enter routing and account number, or use Plaid for instant verification. Payouts go here — double-check the account number carefully.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Set payout schedule</strong><p>Default is next-business-day payouts. Sellers can switch to daily (Instant Transfer, fee applies) or weekly under <code>Account → Balance → Transfer settings</code>. Help the seller understand the difference before they go live.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Process a real verification transaction</strong><p>Run a $1.00 real transaction and refund it. Confirm it settles in the connected bank account within 1–2 business days. If it doesn't, flag for support before go-live — not after the first real shift.</p></div></div>
+        </div>
+        <div class="callout danger">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Don't skip this:</strong> If the seller goes live without verifying their bank account, payouts will be held in Square Balance. This is the most common "where's my money?" support call after activation.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="soft-s3">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Complete identity verification (SSN or EIN)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Connect and verify bank account</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Set preferred payout schedule</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Process and confirm a $1 real verification transaction</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-soft-s4">
+      <div class="step-hdr" onclick="toggleStep('soft-s4')">
+        <div class="step-ico ico-b"><svg viewBox="0 0 16 16" fill="none"><path d="M2 8h3M8 2v3M14 8h-3M8 14v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="step-info"><div class="step-title">Integrations and add-on apps</div><div class="step-sub">Loyalty, marketing, accounting, and kitchen display</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Square's App Marketplace connects to 300+ third-party tools. Activate only what the seller needs before go-live — adding too many apps at once creates confusion during training. These four are the most commonly needed.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">A</div><div class="how-step-body"><strong>Square Kitchen Display System (KDS)</strong><p>If the kitchen has a screen instead of a printer: <code>App Marketplace → Square KDS → Enable</code>. Download the Square KDS app on the kitchen device and sign in with a device code. Set ticket routing rules (which items go to which screen).</p></div></div>
+          <div class="how-step"><div class="how-step-num">B</div><div class="how-step-body"><strong>Square Loyalty</strong><p>Go to <code>Loyalty → Get started</code>. Configure how customers earn points (per visit, per dollar spent, or per item). Set reward thresholds. Loyalty prompts automatically appear at checkout on POS and online ordering — no extra hardware needed.</p></div></div>
+          <div class="how-step"><div class="how-step-num">C</div><div class="how-step-body"><strong>Square Marketing</strong><p>Connect under <code>Marketing → Get started</code>. Import the customer list from previous platform if available. Set up a welcome email campaign to go out when loyalty is first activated. This takes 20 minutes but drives measurable return visits in the first 90 days.</p></div></div>
+          <div class="how-step"><div class="how-step-num">D</div><div class="how-step-body"><strong>Accounting integration (QuickBooks or Xero)</strong><p>Under <code>App Marketplace → [QuickBooks/Xero] → Connect</code>. Authorize the connection and map Square transaction categories to the seller's chart of accounts. Test by processing a transaction and confirming it syncs within 24 hours.</p></div></div>
+        </div>
+        <div class="callout info">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Prioritize KDS and Loyalty:</strong> If the seller only has time for two integrations before go-live, make it these. KDS reduces order errors. Loyalty drives repeat business from day one.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="soft-s4">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Set up Square KDS (if kitchen display is in scope)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Enable and configure Square Loyalty</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Connect accounting integration (if applicable)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Verify all integrations work with a test transaction</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════ PHASE 4 — IMPLEMENTATION ════════════════════ -->
+<div class="ph-section" id="ph-impl">
+  <div class="ph-hero">
+    <div class="ph-eye eye-c">Phase 4 · Implementation</div>
+    <h1>Train, validate, and go live</h1>
+    <p>The final phase: kickoff call, hands-on staff training, online ordering walkthrough, and an end-to-end QA pass before the seller takes their first real order.</p>
+    <div class="ph-prog-row">
+      <div class="ph-prog-bar"><div class="ph-prog-fill fill-c" id="pprog-impl" style="width:0%"></div></div>
+      <span class="ph-prog-label" id="plabel-impl">0 of 4 complete</span>
+    </div>
+  </div>
+  <div class="when-chips">
+    <span class="chip">📋 Kickoff prep</span>
+    <span class="chip">🖥 POS training</span>
+    <span class="chip">📱 Online training</span>
+    <span class="chip">🚀 Go-live QA</span>
+  </div>
+  <div class="step-list">
+
+    <div class="step-card" id="card-impl-s1">
+      <div class="step-hdr" onclick="toggleStep('impl-s1')">
+        <div class="step-ico ico-c"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2L2 5v6l6 3 6-3V5L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Pre-kickoff preparation</div><div class="step-sub">Align on scope, hardware, and logistics before the call</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">A good kickoff call starts with homework done on both sides. Run through this checklist 48 hours before — surprises on the call day set the wrong tone and waste everyone's time.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Confirm hardware has shipped and arrival date</strong><p>Check the hardware order in Dashboard or the carrier tracking email. If hardware hasn't shipped 5 days before kickoff, escalate immediately — don't wait until the day before.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Confirm Phases 1–3 are complete</strong><p>Before the kickoff call: menus published, online ordering live, software fully configured. Training on a half-built system erodes seller confidence. Completion of earlier phases is a prerequisite, not a nice-to-have.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Send the seller a pre-call prep email</strong><p>Ask them to: have their iPad or tablet charged, have all staff present for training, have their Wi-Fi password handy, and confirm their go-live date. This email reduces no-shows and day-of surprises by half.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Prepare your demo environment</strong><p>If using the QSR Product Walkthrough demo account: log in the night before and verify the demo menu is populated. Nothing kills momentum like a demo account that's broken or empty on the day.</p></div></div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="impl-s1">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm hardware shipped with expected delivery date</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Verify Phases 1–3 are fully complete</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Send seller pre-call prep email</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Verify demo account and QSR walkthrough materials</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-impl-s2">
+      <div class="step-hdr" onclick="toggleStep('impl-s2')">
+        <div class="step-ico ico-c"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="step-info"><div class="step-title">POS and Dashboard training</div><div class="step-sub">Live walkthrough with the seller and their staff</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Run this as a hands-on session — staff should be on the actual device, not watching a screen share. Give them tasks to complete themselves, not just a demonstration to observe.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>Opening the POS (10 min)</strong><p>Each staff member signs in with their passcode. Walk through: how to select a POS mode, how the menu grid looks, how to search for an item, and how to navigate back to the home screen. Have each person do this themselves.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Taking an order (15 min)</strong><p>Walk through a complete order: add items, apply modifiers, add a discount, remove an item. Then: select payment type (card / cash / split). Process a card payment. Print or send a receipt. Have two or three staff do this themselves before moving on.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Handling common situations (15 min)</strong><p>Cover: how to void an item after ordering, how to process a refund, how to open the cash drawer manually, and how to apply a comp or house account. These are the four situations that will cause panic on day one if untrained.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Dashboard overview for manager/owner (15 min)</strong><p>Focus on: End of Day report (how to run it and what to look at), Transactions view (how to find and review a specific sale), Team clock-ins, and how to update an item price. Don't go deep on every feature — they'll learn the rest by using it.</p></div></div>
+        </div>
+        <div class="callout tip">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>Training structure that works:</strong> Show once → have them do it → have a second person do it. Passive observation doesn't stick. Active repetition does. Budget 90 minutes minimum for a full staff of 5+.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="impl-s2">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">All staff sign in with their own passcode on device</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Each staff member completes a full order hands-on</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Cover voids, refunds, cash drawer, and comps</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Walk owner/manager through End of Day and reports</span></li>
+        </ul>
+        <div class="res-label">Training resources</div>
+        <div class="res-links">
+          <a class="res-link" href="#" target="_blank"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-3M6 1h4v4H6V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>QSR Product Walkthrough Guide</a>
+          <a class="res-link" href="#" target="_blank"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V4a1 1 0 00-1-1h-3M6 1h4v4H6V1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>GSO Implementation Guide</a>
+          <a class="res-link" href="https://www.youtube.com/@Square" target="_blank"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 5.5l4 2.5-4 2.5V5.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Square YouTube playlist</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-impl-s3">
+      <div class="step-hdr" onclick="toggleStep('impl-s3')">
+        <div class="step-ico ico-c"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Online ordering operations training</div><div class="step-sub">Managing orders, updating hours, and handling 86s</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Online orders require a different operational muscle than in-person orders. This training is separate from POS training and should be run with the manager who will own online operations.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>How online orders arrive in POS</strong><p>When an online order is placed, the POS device shows an incoming order notification. Walk through: accepting the order, reviewing the items, printing the kitchen ticket. Show what happens if the order is not accepted within the timeout window (it auto-cancels and the customer is refunded).</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Updating ordering hours</strong><p>From Dashboard: <code>Online → Overview → Edit hours</code>. Show the manager how to temporarily pause ordering (for busy periods or equipment issues) by toggling "Pause ordering" — this is faster than changing hours and resuming when ready.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>86ing items in real time</strong><p>From POS: <code>Items → [item] → Mark as sold out</code>. This immediately removes the item from online ordering and kiosk. Sold-out items auto-restore at midnight unless manually re-enabled. Walk through this with the manager — it's used constantly during service.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>Handling customer order issues</strong><p>For refunds on online orders: go to <code>Dashboard → Orders → [order] → Issue refund</code>. The refund is automatic and returns to the original payment method within 5–7 days. Show the manager where to find the customer's contact info on the order if they need to reach out directly.</p></div></div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="impl-s3">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Demonstrate incoming online order flow in POS</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Show how to update ordering hours and pause ordering</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Walk through marking items sold out (86ing)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Demonstrate online order refund process</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-card" id="card-impl-s4">
+      <div class="step-hdr" onclick="toggleStep('impl-s4')">
+        <div class="step-ico ico-c"><svg viewBox="0 0 16 16" fill="none"><path d="M2 12l4-4 3 3 5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-info"><div class="step-title">Final QA and go-live declaration</div><div class="step-sub">End-to-end test across every active channel</div></div>
+        <div class="step-right"><span class="step-done-pill">Done</span><svg class="step-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="how-intro">Don't declare the seller live until every item on this list passes. A failed go-live on day one sets a damaging precedent and often leads to churn within 90 days.</p>
+        <div class="how-steps">
+          <div class="how-step"><div class="how-step-num">1</div><div class="how-step-body"><strong>POS order test</strong><p>Ring up a 3-item order with at least one modifier, process with a real card, confirm receipt prints or sends digitally, and confirm the transaction shows in <code>Dashboard → Transactions</code>. Issue refund.</p></div></div>
+          <div class="how-step"><div class="how-step-num">2</div><div class="how-step-body"><strong>Online order test</strong><p>Place an order from the seller's public ordering URL. Confirm it appears as an incoming order in POS. Accept it. Confirm the kitchen ticket prints (if KDS: verify it shows on screen). Confirm customer email confirmation was sent.</p></div></div>
+          <div class="how-step"><div class="how-step-num">3</div><div class="how-step-body"><strong>Hardware check</strong><p>Receipt printer: test print. Cash drawer: open with correct tender type. Card reader: process a test swipe/tap. KDS screen (if applicable): confirm all ticket items appear and can be marked complete.</p></div></div>
+          <div class="how-step"><div class="how-step-num">4</div><div class="how-step-body"><strong>End-of-day close practice</strong><p>Run through the close process with the manager: <code>Dashboard → Reports → End of Day</code>. Review the report together. Confirm they know how to reconcile cash drawer and where to find net sales. Document their close time so you can check in tomorrow.</p></div></div>
+        </div>
+        <div class="callout info">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="callout-body"><strong>After go-live:</strong> Schedule a check-in call or message for the end of the seller's first live day. Quick wins in the first 24 hours (high transaction count, no issues) make the difference between a seller who champions Square and one who becomes a churn risk.</div>
+        </div>
+        <div class="ck-label">Step checklist</div>
+        <ul class="checklist" data-step="impl-s4">
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Complete POS order test (card, receipt, Dashboard)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Complete online order test (submit → POS → kitchen)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Confirm all hardware working (printer, drawer, reader, KDS)</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Run end-of-day close with manager</span></li>
+          <li onclick="toggleCheck(this)"><div class="ck"><svg viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ck-text">Schedule day-1 check-in call with seller</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ SUCCESS ════════ -->
+<div id="success-screen">
+  <div class="succ-ring">
+    <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/><path d="M11 20l6 6 12-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <h2>Seller is activation-ready</h2>
+  <p>All four phases complete. Menu built, ordering live, software configured, and staff trained. This seller is ready to take their first real order.</p>
+  <div class="succ-grid">
+    <div class="succ-card"><div class="succ-card-ico ico-p"><svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><h3>Menu catalog</h3><p>Built, grouped, and live on all channels</p></div>
+    <div class="succ-card"><div class="succ-card-ico ico-t"><svg viewBox="0 0 16 16" fill="none" width="14" height="14"><rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><h3>Online ordering</h3><p>Direct profile live, website embedded</p></div>
+    <div class="succ-card"><div class="succ-card-ico ico-b"><svg viewBox="0 0 16 16" fill="none" width="14" height="14"><rect x="1" y="4" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/></svg></div><h3>Software active</h3><p>POS, payments, and integrations configured</p></div>
+    <div class="succ-card"><div class="succ-card-ico ico-c"><svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Implementation</h3><p>Staff trained, QA passed, go-live clear</p></div>
+  </div>
+  <div class="succ-btns">
+    <button class="btn-pri" onclick="resetAll()">Start a new seller</button>
+    <button class="btn-sec" onclick="window.print()">Print summary</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const PHASES = ['menu','order','soft','impl'];
+const PHASE_STEPS = {
+  menu:  ['menu-s1','menu-s2','menu-s3','menu-s4'],
+  order: ['order-s1','order-s2','order-s3'],
+  soft:  ['soft-s1','soft-s2','soft-s3','soft-s4'],
+  impl:  ['impl-s1','impl-s2','impl-s3','impl-s4']
+};
+const PHASE_COLORS = {menu:'ph-menu',order:'ph-order',soft:'ph-soft',impl:'ph-impl'};
+
+let currentPhase = 'menu';
+
+function switchPhase(phase, btn) {
+  currentPhase = phase;
+  PHASES.forEach(p => {
+    document.getElementById('ph-' + p).classList.remove('active');
+    document.getElementById('sbtn-' + p).classList.remove('active','ph-menu','ph-order','ph-soft','ph-impl');
+  });
+  document.getElementById('ph-' + phase).classList.add('active');
+  btn.classList.add('active', PHASE_COLORS[phase]);
+  updateSidebarLinks();
+}
+
+function toggleStep(stepId) {
+  const card = document.getElementById('card-' + stepId);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.step-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function openStep(phase, step) {
+  if (currentPhase !== phase) {
+    const btn = document.getElementById('sbtn-' + phase);
+    switchPhase(phase, btn);
+  }
+  setTimeout(() => {
+    const card = document.getElementById('card-' + phase + '-' + step);
+    document.querySelectorAll('.step-card.open').forEach(c => c.classList.remove('open'));
+    if (card) {
+      card.classList.add('open');
+      card.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 50);
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('done');
+  const step = li.closest('.checklist').dataset.step;
+  updateProgress();
+  updateStepDone(step);
+  updateSidebarLinks();
+}
+
+function updateStepDone(stepId) {
+  const card = document.getElementById('card-' + stepId);
+  if (!card) return;
+  const items = card.querySelectorAll('.checklist li');
+  const done = card.querySelectorAll('.checklist li.done');
+  card.classList.toggle('all-done', items.length > 0 && done.length === items.length);
+}
+
+function updateSidebarLinks() {
+  PHASES.forEach(phase => {
+    PHASE_STEPS[phase].forEach((stepId, i) => {
+      const card = document.getElementById('card-' + stepId);
+      if (!card) return;
+      const items = card.querySelectorAll('.checklist li');
+      const done = card.querySelectorAll('.checklist li.done');
+      const allDone = items.length > 0 && done.length === items.length;
+      const links = document.querySelectorAll(`#sbsteps-${phase} .sb-step-link`);
+      if (links[i]) links[i].classList.toggle('done', allDone);
+    });
+  });
+}
+
+function getPhaseStats(phase) {
+  let total = 0, done = 0, stepsDone = 0;
+  const steps = PHASE_STEPS[phase];
+  steps.forEach(stepId => {
+    const card = document.getElementById('card-' + stepId);
+    if (!card) return;
+    const items = card.querySelectorAll('.checklist li');
+    const doneItems = card.querySelectorAll('.checklist li.done');
+    total += items.length;
+    done += doneItems.length;
+    if (items.length > 0 && doneItems.length === items.length) stepsDone++;
+  });
+  return {total, done, stepsDone, steps: steps.length};
+}
+
+function updateProgress() {
+  let grandTotal = 0, grandDone = 0;
+  let allPhasesComplete = true;
+
+  PHASES.forEach(phase => {
+    const {total, done, stepsDone, steps} = getPhaseStats(phase);
+    grandTotal += total;
+    grandDone += done;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+    const prog = document.getElementById('pprog-' + phase);
+    const label = document.getElementById('plabel-' + phase);
+    const meta = document.getElementById('smeta-' + phase);
+    if (prog) prog.style.width = pct + '%';
+    if (label) label.textContent = stepsDone + ' of ' + steps + ' complete';
+    if (meta) meta.textContent = stepsDone + '/' + steps;
+    if (stepsDone < steps) allPhasesComplete = false;
+  });
+
+  const overallPct = grandTotal > 0 ? Math.round(grandDone / grandTotal * 100) : 0;
+  document.getElementById('sb-fill').style.width = overallPct + '%';
+  document.getElementById('sb-pct').textContent = overallPct + '%';
+  document.getElementById('hdr-fill').style.width = overallPct + '%';
+  document.getElementById('hdr-pct').textContent = overallPct + '%';
+
+  const ready = document.getElementById('sb-ready');
+  if (allPhasesComplete) {
+    ready.classList.add('show');
+    if (!document.getElementById('success-screen').classList.contains('shown')) {
+      setTimeout(triggerSuccess, 500);
+    }
+  } else {
+    ready.classList.remove('show');
+  }
+}
+
+function triggerSuccess() {
+  document.getElementById('success-screen').classList.add('shown');
+  PHASES.forEach(p => document.getElementById('ph-' + p).classList.remove('active'));
+  document.getElementById('success-screen').style.display = 'flex';
+  launchConfetti();
+}
+
+function resetAll() {
+  document.querySelectorAll('.checklist li').forEach(li => li.classList.remove('done'));
+  document.querySelectorAll('.step-card').forEach(c => c.classList.remove('open','all-done'));
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('success-screen').classList.remove('shown');
+  PHASES.forEach(p => document.getElementById('sbtn-' + p).classList.remove('active','ph-menu','ph-order','ph-soft','ph-impl'));
+  const first = document.getElementById('sbtn-menu');
+  first.classList.add('active','ph-menu');
+  document.getElementById('ph-menu').classList.add('active');
+  currentPhase = 'menu';
+  updateSidebarLinks();
+  updateProgress();
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('conf');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#7F77DD','#1D9E75','#378ADD','#D85A30','#BA7517','#9FE1CB','#AFA9EC'];
+  const pieces = Array.from({length:150}, () => ({
+    x: Math.random() * canvas.width, y: -20,
+    r: 4 + Math.random() * 5,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    vx: (Math.random() - .5) * 5, vy: 3 + Math.random() * 4,
+    rot: Math.random() * Math.PI * 2, vrot: (Math.random() - .5) * .25,
+    shape: Math.random() > .5 ? 'rect' : 'circle'
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += .06; p.rot += p.vrot;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - frame / 130);
+      if (p.shape === 'rect') ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+      else { ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill(); }
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 150) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+</script>
+</body>
+</html>
